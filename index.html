@@ -3,259 +3,234 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>今日午餐互動小機器</title>
+<title>午餐互動小遊戲</title>
+
 <style>
-  body {
-    margin: 0;
-    font-family: "Noto Sans TC", "Microsoft JhengHei", sans-serif;
-    background: linear-gradient(135deg, #fff1f5, #fff8dc, #e8f7ff);
-    color: #4a3b3b;
-  }
+body {
+  margin: 0;
+  font-family: "Noto Sans TC", sans-serif;
+  background: linear-gradient(135deg,#fff1f5,#fff8dc,#e8f7ff);
+}
 
-  .container {
-    max-width: 760px;
-    margin: auto;
-    padding: 28px 18px 60px;
-  }
+.container {
+  max-width: 720px;
+  margin: auto;
+  padding: 30px 16px;
+}
 
-  .hero {
-    text-align: center;
-    background: white;
-    border-radius: 28px;
-    padding: 30px 22px;
-    box-shadow: 0 12px 30px rgba(255, 160, 180, 0.25);
-    border: 3px solid #ffd6e0;
-  }
+h1 {
+  text-align: center;
+  color: #ff7c9c;
+  font-size: 30px;
+}
 
-  h1 {
-    font-size: 32px;
-    margin: 0 0 10px;
-    color: #ff7c9c;
-  }
+.card {
+  background: white;
+  border-radius: 24px;
+  padding: 22px;
+  margin-top: 20px;
+  box-shadow: 0 10px 24px rgba(0,0,0,0.08);
+}
 
-  .subtitle {
-    font-size: 16px;
-    color: #7b6666;
-    line-height: 1.7;
-  }
+h2 {
+  color: #ff8aa8;
+}
 
-  .card {
-    background: rgba(255,255,255,0.9);
-    border-radius: 24px;
-    margin-top: 22px;
-    padding: 22px;
-    box-shadow: 0 8px 24px rgba(150, 120, 120, 0.12);
-    border: 2px dashed #ffd1dc;
-  }
+button {
+  width: 100%;
+  padding: 14px;
+  border-radius: 999px;
+  border: none;
+  font-size: 16px;
+  font-weight: bold;
+  margin-top: 12px;
+  background: linear-gradient(135deg,#ff8aa8,#ffb86c);
+  color: white;
+  cursor: pointer;
+}
 
-  h2 {
-    color: #ff8aa8;
-    margin-top: 0;
-    font-size: 22px;
-  }
+.card-stage {
+  position: relative;
+  height: 170px;
+  margin-top: 18px;
+  overflow: hidden;
+}
 
-  button {
-    width: 100%;
-    border: none;
-    border-radius: 999px;
-    padding: 14px 18px;
-    margin-top: 12px;
-    font-size: 16px;
-    font-weight: 700;
-    color: white;
-    background: linear-gradient(135deg, #ff8aa8, #ffb86c);
-    box-shadow: 0 6px 16px rgba(255, 130, 150, 0.35);
-    cursor: pointer;
-  }
+.draw-card {
+  position: absolute;
+  inset: 0;
+  background: #fff7fa;
+  border: 2px solid #ffd1dc;
+  border-radius: 22px;
+  padding: 22px;
+  box-sizing: border-box;
+  line-height: 1.8;
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  box-shadow: 0 8px 18px rgba(255, 130, 160, 0.18);
+  transition: transform 0.45s ease, opacity 0.45s ease;
+}
 
-  button:active {
-    transform: scale(0.98);
-  }
+.slide-out {
+  transform: translateX(-120%) rotate(-8deg);
+  opacity: 0;
+}
 
-  .result {
-    margin-top: 16px;
-    padding: 18px;
-    background: #fff8fb;
-    border-radius: 18px;
-    line-height: 1.8;
-    font-size: 17px;
-    border: 1px solid #ffd6e0;
-    min-height: 50px;
-  }
+.slide-in {
+  animation: slideIn 0.45s ease;
+}
 
-  select, input {
-    width: 100%;
-    box-sizing: border-box;
-    padding: 13px;
-    margin: 8px 0 12px;
-    border-radius: 14px;
-    border: 2px solid #ffd1dc;
-    font-size: 16px;
-    background: white;
+@keyframes slideIn {
+  from {
+    transform: translateX(120%) rotate(8deg);
+    opacity: 0;
   }
+  to {
+    transform: translateX(0) rotate(0);
+    opacity: 1;
+  }
+}
 
-  .tag {
-    display: inline-block;
-    background: #ffe4ec;
-    color: #ff6f91;
-    padding: 6px 12px;
-    border-radius: 999px;
-    font-size: 14px;
-    margin-bottom: 8px;
-  }
-
-  .footer {
-    text-align: center;
-    color: #9a7d7d;
-    margin-top: 28px;
-    font-size: 14px;
-  }
+.result {
+  margin-top: 14px;
+  padding: 16px;
+  background: #fff7fa;
+  border-radius: 16px;
+  min-height: 50px;
+  line-height: 1.8;
+  font-size: 17px;
+}
 </style>
 </head>
 
 <body>
 <div class="container">
 
-  <div class="hero">
-    <h1>今日午餐互動小機器 🍱</h1>
-    <div class="subtitle">
-      專門處理：不知道聊什麼、對方太冷靜、午餐選擇困難。<br>
-      請輕按，不要嚴肅分析。
-    </div>
+<h1>🍱 午餐互動小遊戲</h1>
+
+<div class="card">
+  <h2>🎴 今日聊天抽卡</h2>
+  <button onclick="draw()">滑一張新卡</button>
+
+  <div class="card-stage">
+    <div class="draw-card" id="q">今天要抽一張很沒負擔的怪卡。</div>
   </div>
+</div>
 
-  <div class="card">
-    <span class="tag">功能一</span>
-    <h2>今日聊天抽卡 🎴</h2>
-    <p>按一下，抽一個不尷尬又有點好笑的聊天題目。</p>
-    <button onclick="drawTopic()">抽一張聊天卡</button>
-    <div class="result" id="topicResult">今天會抽到什麼呢？</div>
-  </div>
-
-  <div class="card">
-    <span class="tag">功能二</span>
-    <h2>B語翻譯機 🤖</h2>
-    <p>選一句常見句子，系統幫你翻成比較可愛的版本。</p>
-
-    <select id="bSentence">
-      <option value="我知道啊">我知道啊</option>
-      <option value="都可以">都可以</option>
-      <option value="還好">還好</option>
-      <option value="沒有啊">沒有啊</option>
-      <option value="看你">看你</option>
-      <option value="我不知道">我不知道</option>
-    </select>
-
-    <button onclick="translateB()">開始翻譯</button>
-    <div class="result" id="translateResult">等待翻譯中……</div>
-  </div>
-
-  <div class="card">
-    <span class="tag">功能三</span>
-    <h2>今日相處模式測驗 🌤️</h2>
-    <p>選一下今天的狀態，看看適合哪種午餐互動模式。</p>
-
-    <label>今天電量</label>
-    <select id="energy">
-      <option value="low">20% 低電量</option>
-      <option value="mid">50% 普通電量</option>
-      <option value="high">90% 可以鬧一下</option>
-    </select>
-
-    <label>今天想吃飯的氣氛</label>
-    <select id="mood">
-      <option value="quiet">安靜吃飯</option>
-      <option value="chat">輕鬆聊天</option>
-      <option value="funny">可以開玩笑</option>
-    </select>
-
-    <button onclick="matchMode()">產生今日模式</button>
-    <div class="result" id="modeResult">今日模式尚未啟動。</div>
-  </div>
-
-  <div class="card">
-    <span class="tag">加碼</span>
-    <h2>午餐命運轉盤 🍜</h2>
-    <p>不知道吃什麼的時候，交給命運。</p>
-    <button onclick="foodWheel()">轉一下</button>
-    <div class="result" id="foodResult">午餐命運還在沉睡。</div>
-  </div>
-
-  <div class="footer">
-    今日原則：輕鬆互動，不審問，不逼供，不過度解讀。
-  </div>
+<div class="card">
+  <h2>🍜 午餐命運轉盤</h2>
+  <button onclick="food()">轉一下</button>
+  <div class="result" id="f">午餐命運還沒啟動。</div>
+</div>
 
 </div>
 
 <script>
-const topics = [
-  "如果今天可以提早下班，你第一件事想做什麼？",
-  "最近有沒有一個你覺得『還不錯』的小東西？",
-  "今天午餐如果只能用三個字形容，會是什麼？",
-  "如果便利商店新品要你評分，你最近會推薦哪一個？",
-  "今天最不想處理的事情是什麼？只能講一件。",
-  "如果今天有一張免責卡，你想拿來免除什麼？",
-  "最近有沒有看到什麼荒謬但好笑的事？",
-  "如果今天要幫自己取一個狀態名稱，會叫什麼？",
-  "你覺得今天比較像星期幾？不能回答今天真的星期幾。",
-  "如果午餐可以加一個特效，你希望是什麼？"
+const questions = [
+"如果今天的午餐會掉落一個道具，你希望是什麼？",
+"如果這家店有隱藏菜單，你覺得會是什麼？",
+"今天路上看到的第一個奇怪東西是什麼？",
+"如果午餐店老闆是遊戲NPC，他會說哪句台詞？",
+"如果今天只能用一個音效形容，你會選什麼？",
+"如果你的湯突然會講話，它第一句會說什麼？",
+"今天比較像省電模式，還是亂跑模式？",
+"如果今天的你是一個工具，會是螺絲起子、膠帶還是剪刀？",
+"如果這份午餐要取一個中二名字，會叫什麼？",
+"如果今天公司附近出現任意門，你會先去哪？",
+
+"你覺得哪種食物最像在認真上班？",
+"如果一顆貢丸有夢想，它會想成為什麼？",
+"今天如果可以帶一隻動物上班，你會帶什麼？",
+"如果你的飲料有戰鬥力，今天大概幾分？",
+"如果今天只能用三個字抱怨，你會說什麼？",
+"如果等紅燈時可以抽一個技能，你想抽到什麼？",
+"今天比較適合當主角、路人，還是旁白？",
+"如果午餐店要推出你的專屬套餐，會叫什麼？",
+"你覺得哪個便當菜最沒存在感？",
+"如果筷子突然罷工，你會怎麼辦？",
+
+"如果今天有一個無用超能力，你希望是什麼？",
+"你覺得哪種食物最有老闆感？",
+"如果今天的天氣是一個同事，它是什麼個性？",
+"如果白飯可以升級，你想加什麼功能？",
+"今天比較像一杯冰美式還是一碗熱湯？",
+"如果午餐時間可以暫停十分鐘，你會拿來做什麼？",
+"如果公司附近要開一家奇怪的店，你希望賣什麼？",
+"你覺得哪個餐具最有安全感？",
+"如果今天的心情是一個資料夾，檔名會是什麼？",
+"如果這條路每天都在看我們，它會吐槽什麼？",
+
+"如果你的鞋子今天有意見，它會說什麼？",
+"你覺得哪種食物最像在偷懶？",
+"如果今天要選一個人生快捷鍵，你想按哪個？",
+"如果電梯突然變成遊戲關卡，任務會是什麼？",
+"如果午餐可以附贈一個小願望，你要什麼？",
+"今天比較需要補血、補魔，還是補眠？",
+"如果你可以把一件小事外包給機器人，你會外包什麼？",
+"如果今天的你是一個表情符號，會是哪個？",
+"如果路邊招牌會互相聊天，它們會聊什麼？",
+"如果飲料可以幫你完成一件事，你要它做什麼？",
+
+"你覺得哪一道菜最像很會開會的人？",
+"如果午餐要拍成電影，片名會是什麼？",
+"如果今天可以合法消失十五分鐘，你會去哪裡？",
+"如果你有一個口袋道具，只能很廢但很好笑，會是什麼？",
+"你覺得哪種食物最適合當隊友？",
+"如果今天有一個小怪要打，會是什麼小怪？",
+"如果一杯湯有個性，它是冷靜派還是熱血派？",
+"如果今天可以把一句話變成貼紙，你會選哪句？",
+"如果午餐店有成就系統，今天解鎖什麼成就？",
+"如果今天走路會自帶背景音樂，你覺得是哪種？",
+
+"你覺得哪種食物最像可靠但不講話的人？",
+"如果今天有一個按鈕可以讓時間快轉到下班，你會按嗎？",
+"如果便當盒裡出現神秘格子，你希望裡面是什麼？",
+"如果今天要幫自己取一個任務名稱，會叫什麼？",
+"如果午餐路上可以撿到一個小幸運，你想撿到什麼？",
+"你覺得哪個日常物品最像有自己的脾氣？",
+"如果今天的自己是交通工具，會是腳踏車、機車還是電梯？",
+"如果午餐可以抽盲盒，你最怕抽到什麼？",
+"如果今天的煩躁可以實體化，它會長什麼樣？",
+"如果今天要用一句廢話總結，會是什麼？"
 ];
 
-function drawTopic() {
-  const item = topics[Math.floor(Math.random() * topics.length)];
-  document.getElementById("topicResult").innerHTML = "🎴 今日聊天卡：<br><b>" + item + "</b>";
-}
+function draw(){
+  const card = document.getElementById("q");
+  const r = questions[Math.floor(Math.random()*questions.length)];
 
-const translations = {
-  "我知道啊": "翻譯：我有接收到，只是我的表情系統尚未開機。",
-  "都可以": "翻譯：我願意配合，目前沒有強烈偏好。",
-  "還好": "翻譯：沒有不好，也沒有要大力稱讚，但可以接受。",
-  "沒有啊": "翻譯：我目前沒有整理出完整說明，但不是在拒絕對話。",
-  "看你": "翻譯：我把選擇權交給你，並且準備配合。",
-  "我不知道": "翻譯：我的腦袋正在緩衝，請給我三秒鐘。"
-};
+  card.classList.add("slide-out");
 
-function translateB() {
-  const sentence = document.getElementById("bSentence").value;
-  document.getElementById("translateResult").innerHTML = "🤖 " + translations[sentence];
-}
+  setTimeout(() => {
+    card.innerHTML = r;
+    card.classList.remove("slide-out");
+    card.classList.add("slide-in");
+  }, 250);
 
-function matchMode() {
-  const energy = document.getElementById("energy").value;
-  const mood = document.getElementById("mood").value;
-  let result = "";
-
-  if (energy === "low" && mood === "quiet") {
-    result = "🌙 今日模式：低耗能陪伴局<br>適合：吃飯、散步、少講但不尷尬。<br>避免：深度人生訪談。";
-  } else if (energy === "low" && mood !== "quiet") {
-    result = "🍵 今日模式：微弱但仍可互動局<br>適合：短句聊天、講小廢話。<br>避免：連續追問三題以上。";
-  } else if (energy === "mid" && mood === "chat") {
-    result = "🌤️ 今日模式：正常午餐聊天局<br>適合：聊工作小事、生活觀察、午餐評論。";
-  } else if (energy === "high" || mood === "funny") {
-    result = "🎉 今日模式：可以鬧一下局<br>適合：抽卡、吐槽、亂取綽號、互相評分午餐。";
-  } else {
-    result = "🍱 今日模式：穩定吃飯局<br>適合：自然聊天，不用硬找話題。";
-  }
-
-  document.getElementById("modeResult").innerHTML = result;
+  setTimeout(() => {
+    card.classList.remove("slide-in");
+  }, 700);
 }
 
 const foods = [
-  "🍜 拉麵：今天需要一點熱湯修復靈魂。",
-  "🍱 便當：安全牌，但安全有時候就是幸福。",
-  "🥟 水餃：適合低電量但還想吃飽。",
-  "🍛 咖哩飯：今天需要一點濃郁的安慰。",
-  "🥗 沙拉：假裝很健康的一天。",
-  "🍔 漢堡：今天不適合太克制。",
-  "🍲 火鍋：適合有話聊，也適合沒話聊。",
-  "🍙 飯糰＋飲料：快速解決，保留人生體力。",
-  "🍝 義大利麵：今天可以稍微精緻一點。",
-  "🥪 三明治：低調、方便、不出錯。"
+"米粉湯","油飯","肉粽","涼麵","肉圓",
+"便當","雞腿飯","排骨飯","滷肉飯","雞肉飯",
+"燒肉飯","燒臘便當","控肉飯","爌肉飯","魚排飯",
+"咖哩飯","日式丼飯","牛丼","親子丼","豬排丼",
+"牛肉麵","餛飩麵","乾麵","湯麵","陽春麵",
+"榨菜肉絲麵","麻醬麵","鍋燒意麵","炒飯","炒麵",
+"水餃","鍋貼","湯包","小籠包","餛飩湯",
+"貢丸湯配主食","米粉炒","粄條","越南河粉","泰式打拋豬飯",
+"韓式拌飯","韓式豆腐鍋","小火鍋","鐵板燒","自助餐",
+"健康餐盒","沙拉餐盒","三明治","潛艇堡","早餐店午餐",
+"便利商店便當","關東煮配飯糰","壽司","飯糰","隨便找一家安全牌"
 ];
 
-function foodWheel() {
-  const item = foods[Math.floor(Math.random() * foods.length)];
-  document.getElementById("foodResult").innerHTML = item;
+function food(){
+  const r = foods[Math.floor(Math.random()*foods.length)];
+  document.getElementById("f").innerHTML = "👉 今日推薦：" + r;
 }
 </script>
 
