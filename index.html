@@ -1,1 +1,263 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>今日午餐互動小機器</title>
+<style>
+  body {
+    margin: 0;
+    font-family: "Noto Sans TC", "Microsoft JhengHei", sans-serif;
+    background: linear-gradient(135deg, #fff1f5, #fff8dc, #e8f7ff);
+    color: #4a3b3b;
+  }
 
+  .container {
+    max-width: 760px;
+    margin: auto;
+    padding: 28px 18px 60px;
+  }
+
+  .hero {
+    text-align: center;
+    background: white;
+    border-radius: 28px;
+    padding: 30px 22px;
+    box-shadow: 0 12px 30px rgba(255, 160, 180, 0.25);
+    border: 3px solid #ffd6e0;
+  }
+
+  h1 {
+    font-size: 32px;
+    margin: 0 0 10px;
+    color: #ff7c9c;
+  }
+
+  .subtitle {
+    font-size: 16px;
+    color: #7b6666;
+    line-height: 1.7;
+  }
+
+  .card {
+    background: rgba(255,255,255,0.9);
+    border-radius: 24px;
+    margin-top: 22px;
+    padding: 22px;
+    box-shadow: 0 8px 24px rgba(150, 120, 120, 0.12);
+    border: 2px dashed #ffd1dc;
+  }
+
+  h2 {
+    color: #ff8aa8;
+    margin-top: 0;
+    font-size: 22px;
+  }
+
+  button {
+    width: 100%;
+    border: none;
+    border-radius: 999px;
+    padding: 14px 18px;
+    margin-top: 12px;
+    font-size: 16px;
+    font-weight: 700;
+    color: white;
+    background: linear-gradient(135deg, #ff8aa8, #ffb86c);
+    box-shadow: 0 6px 16px rgba(255, 130, 150, 0.35);
+    cursor: pointer;
+  }
+
+  button:active {
+    transform: scale(0.98);
+  }
+
+  .result {
+    margin-top: 16px;
+    padding: 18px;
+    background: #fff8fb;
+    border-radius: 18px;
+    line-height: 1.8;
+    font-size: 17px;
+    border: 1px solid #ffd6e0;
+    min-height: 50px;
+  }
+
+  select, input {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 13px;
+    margin: 8px 0 12px;
+    border-radius: 14px;
+    border: 2px solid #ffd1dc;
+    font-size: 16px;
+    background: white;
+  }
+
+  .tag {
+    display: inline-block;
+    background: #ffe4ec;
+    color: #ff6f91;
+    padding: 6px 12px;
+    border-radius: 999px;
+    font-size: 14px;
+    margin-bottom: 8px;
+  }
+
+  .footer {
+    text-align: center;
+    color: #9a7d7d;
+    margin-top: 28px;
+    font-size: 14px;
+  }
+</style>
+</head>
+
+<body>
+<div class="container">
+
+  <div class="hero">
+    <h1>今日午餐互動小機器 🍱</h1>
+    <div class="subtitle">
+      專門處理：不知道聊什麼、對方太冷靜、午餐選擇困難。<br>
+      請輕按，不要嚴肅分析。
+    </div>
+  </div>
+
+  <div class="card">
+    <span class="tag">功能一</span>
+    <h2>今日聊天抽卡 🎴</h2>
+    <p>按一下，抽一個不尷尬又有點好笑的聊天題目。</p>
+    <button onclick="drawTopic()">抽一張聊天卡</button>
+    <div class="result" id="topicResult">今天會抽到什麼呢？</div>
+  </div>
+
+  <div class="card">
+    <span class="tag">功能二</span>
+    <h2>B語翻譯機 🤖</h2>
+    <p>選一句常見句子，系統幫你翻成比較可愛的版本。</p>
+
+    <select id="bSentence">
+      <option value="我知道啊">我知道啊</option>
+      <option value="都可以">都可以</option>
+      <option value="還好">還好</option>
+      <option value="沒有啊">沒有啊</option>
+      <option value="看你">看你</option>
+      <option value="我不知道">我不知道</option>
+    </select>
+
+    <button onclick="translateB()">開始翻譯</button>
+    <div class="result" id="translateResult">等待翻譯中……</div>
+  </div>
+
+  <div class="card">
+    <span class="tag">功能三</span>
+    <h2>今日相處模式測驗 🌤️</h2>
+    <p>選一下今天的狀態，看看適合哪種午餐互動模式。</p>
+
+    <label>今天電量</label>
+    <select id="energy">
+      <option value="low">20% 低電量</option>
+      <option value="mid">50% 普通電量</option>
+      <option value="high">90% 可以鬧一下</option>
+    </select>
+
+    <label>今天想吃飯的氣氛</label>
+    <select id="mood">
+      <option value="quiet">安靜吃飯</option>
+      <option value="chat">輕鬆聊天</option>
+      <option value="funny">可以開玩笑</option>
+    </select>
+
+    <button onclick="matchMode()">產生今日模式</button>
+    <div class="result" id="modeResult">今日模式尚未啟動。</div>
+  </div>
+
+  <div class="card">
+    <span class="tag">加碼</span>
+    <h2>午餐命運轉盤 🍜</h2>
+    <p>不知道吃什麼的時候，交給命運。</p>
+    <button onclick="foodWheel()">轉一下</button>
+    <div class="result" id="foodResult">午餐命運還在沉睡。</div>
+  </div>
+
+  <div class="footer">
+    今日原則：輕鬆互動，不審問，不逼供，不過度解讀。
+  </div>
+
+</div>
+
+<script>
+const topics = [
+  "如果今天可以提早下班，你第一件事想做什麼？",
+  "最近有沒有一個你覺得『還不錯』的小東西？",
+  "今天午餐如果只能用三個字形容，會是什麼？",
+  "如果便利商店新品要你評分，你最近會推薦哪一個？",
+  "今天最不想處理的事情是什麼？只能講一件。",
+  "如果今天有一張免責卡，你想拿來免除什麼？",
+  "最近有沒有看到什麼荒謬但好笑的事？",
+  "如果今天要幫自己取一個狀態名稱，會叫什麼？",
+  "你覺得今天比較像星期幾？不能回答今天真的星期幾。",
+  "如果午餐可以加一個特效，你希望是什麼？"
+];
+
+function drawTopic() {
+  const item = topics[Math.floor(Math.random() * topics.length)];
+  document.getElementById("topicResult").innerHTML = "🎴 今日聊天卡：<br><b>" + item + "</b>";
+}
+
+const translations = {
+  "我知道啊": "翻譯：我有接收到，只是我的表情系統尚未開機。",
+  "都可以": "翻譯：我願意配合，目前沒有強烈偏好。",
+  "還好": "翻譯：沒有不好，也沒有要大力稱讚，但可以接受。",
+  "沒有啊": "翻譯：我目前沒有整理出完整說明，但不是在拒絕對話。",
+  "看你": "翻譯：我把選擇權交給你，並且準備配合。",
+  "我不知道": "翻譯：我的腦袋正在緩衝，請給我三秒鐘。"
+};
+
+function translateB() {
+  const sentence = document.getElementById("bSentence").value;
+  document.getElementById("translateResult").innerHTML = "🤖 " + translations[sentence];
+}
+
+function matchMode() {
+  const energy = document.getElementById("energy").value;
+  const mood = document.getElementById("mood").value;
+  let result = "";
+
+  if (energy === "low" && mood === "quiet") {
+    result = "🌙 今日模式：低耗能陪伴局<br>適合：吃飯、散步、少講但不尷尬。<br>避免：深度人生訪談。";
+  } else if (energy === "low" && mood !== "quiet") {
+    result = "🍵 今日模式：微弱但仍可互動局<br>適合：短句聊天、講小廢話。<br>避免：連續追問三題以上。";
+  } else if (energy === "mid" && mood === "chat") {
+    result = "🌤️ 今日模式：正常午餐聊天局<br>適合：聊工作小事、生活觀察、午餐評論。";
+  } else if (energy === "high" || mood === "funny") {
+    result = "🎉 今日模式：可以鬧一下局<br>適合：抽卡、吐槽、亂取綽號、互相評分午餐。";
+  } else {
+    result = "🍱 今日模式：穩定吃飯局<br>適合：自然聊天，不用硬找話題。";
+  }
+
+  document.getElementById("modeResult").innerHTML = result;
+}
+
+const foods = [
+  "🍜 拉麵：今天需要一點熱湯修復靈魂。",
+  "🍱 便當：安全牌，但安全有時候就是幸福。",
+  "🥟 水餃：適合低電量但還想吃飽。",
+  "🍛 咖哩飯：今天需要一點濃郁的安慰。",
+  "🥗 沙拉：假裝很健康的一天。",
+  "🍔 漢堡：今天不適合太克制。",
+  "🍲 火鍋：適合有話聊，也適合沒話聊。",
+  "🍙 飯糰＋飲料：快速解決，保留人生體力。",
+  "🍝 義大利麵：今天可以稍微精緻一點。",
+  "🥪 三明治：低調、方便、不出錯。"
+];
+
+function foodWheel() {
+  const item = foods[Math.floor(Math.random() * foods.length)];
+  document.getElementById("foodResult").innerHTML = item;
+}
+</script>
+
+</body>
+</html>
