@@ -117,7 +117,7 @@ button{
 
 <div class="wheel-wrap">
 <div class="pointer"></div>
-<canvas id="wheel" class="wheel" width="300" height="300"></canvas>
+<canvas id="wheel" class="wheel"></canvas>
 </div>
 
 <button onclick="spinWheel()">開始旋轉</button>
@@ -132,26 +132,25 @@ button{
 /* 聊天題目（具體版） */
 const questions=[
 "如果今天可以得到小叮噹的一個道具，你會選哪個？為什麼",
-"如果你電腦可以多一個功能，你最希望是什麼（例如：自動幫你回訊息）",
-"如果今天可以跳過一個工作流程，你最想跳過哪一段",
-"如果你的滑鼠多一個隱藏按鍵，你希望它做什麼",
-"如果你今天有一個『自動完成』功能，你會用在哪件事上",
-"如果你可以把一件麻煩事外包給AI，你會選哪一件",
-"如果今天手機多一個模式，你希望是什麼模式",
-"如果你可以讓時間暫停5分鐘，你會拿來做什麼",
-"如果今天有一個『不用排隊』能力，你會用在哪裡",
-"如果你可以讓一件事情變得超快，你會選哪件",
-
-"如果你有一個『不用解釋』功能，你會用在哪個情境",
-"如果你可以刪掉今天的一段時間，你會刪哪段",
-"如果今天有一個『直接完成』按鈕，你會按哪件事",
-"如果你可以多一個分身，你會讓他幫你做什麼",
-"如果今天有一個『免責卡』，你會用在哪件事上",
-"如果你可以讓一件事情變得不用思考，你會選哪個",
-"如果今天多一個快捷鍵，你最希望是哪個功能",
-"如果你可以讓一件事永遠不用再做，你會選什麼",
-"如果今天可以隨機獲得一個能力，你希望偏哪種類型",
-"如果你可以設定一個『自動回應』，會是什麼內容"
+"如果你電腦可以多一個功能，你最希望是什麼",
+"如果今天可以跳過一個流程，你最想跳過哪一段",
+"如果滑鼠多一個按鍵，你希望它做什麼",
+"如果今天有自動完成功能，你會用在哪件事",
+"如果可以外包一件麻煩事給AI，你會選什麼",
+"如果手機多一個模式，你希望是什麼",
+"如果時間可以暫停5分鐘，你會做什麼",
+"如果今天可以不用排隊，你會用在哪",
+"如果一件事可以變超快，你會選哪件",
+"如果今天有免責卡，你會用在哪件事",
+"如果可以刪掉今天一段時間，你會刪哪段",
+"如果今天多一個快捷鍵，你希望是什麼",
+"如果可以不用再做一件事，你會選什麼",
+"如果今天可以複製一個自己，你會讓他做什麼",
+"如果今天可以直接完成一件事，你會選哪件",
+"如果今天可以不用解釋，你會用在哪情境",
+"如果今天有一個偷懶技能，你會用在哪",
+"如果今天可以跳過思考，你會選哪件事",
+"如果今天可以讓一件事變簡單，你會選什麼"
 ];
 
 function draw(){
@@ -174,7 +173,7 @@ function draw(){
   },200);
 }
 
-/* 轉盤 */
+/* 轉盤資料 */
 const foods=[
 "米粉湯","油飯","肉粽","涼麵","肉圓",
 "便當","雞腿飯","排骨飯","滷肉飯","雞肉飯",
@@ -184,15 +183,17 @@ const foods=[
 
 const canvas=document.getElementById("wheel");
 const ctx=canvas.getContext("2d");
+
+canvas.width=600;
+canvas.height=600;
+
 const size=300;
 const center=size/2;
 const slice=2*Math.PI/foods.length;
 
-/* 🔥 修正文字清晰 */
-canvas.width=600;
-canvas.height=600;
 ctx.scale(2,2);
 
+/* 畫轉盤 */
 function drawWheel(){
   for(let i=0;i<foods.length;i++){
     ctx.beginPath();
@@ -204,9 +205,13 @@ function drawWheel(){
     ctx.save();
     ctx.translate(center,center);
     ctx.rotate(i*slice+slice/2);
+
     ctx.fillStyle="#333";
     ctx.font="bold 12px sans-serif";
-    ctx.fillText(foods[i],center-10,4);
+
+    // 🔥 關鍵：文字往內縮
+    ctx.fillText(foods[i],center-40,4);
+
     ctx.restore();
   }
 }
@@ -218,23 +223,31 @@ const doneSound=new Audio("https://assets.mixkit.co/sfx/preview/mixkit-game-succ
 
 let rotation=0;
 
+/* 旋轉 */
 function spinWheel(){
-  const index=Math.floor(Math.random()*foods.length);
-  const deg=360/foods.length;
 
-  const target=360*5+(360-index*deg-deg/2);
-  rotation+=target;
+  const spin=360*5+Math.random()*360;
+  rotation+=spin;
 
   spinSound.play();
-
   canvas.style.transform=`rotate(${rotation}deg)`;
 
   setTimeout(()=>{
+    const index=getResultIndex();
     doneSound.play();
     document.getElementById("f").innerHTML="👉 今日推薦："+foods[index];
   },4000);
 }
-</script>
 
+/* 🔥 核心：角度 → 結果 */
+function getResultIndex(){
+  const deg=rotation%360;
+
+  const adjusted=(360-deg+90)%360;
+
+  return Math.floor(adjusted/(360/foods.length));
+}
+
+</script>
 </body>
 </html>
