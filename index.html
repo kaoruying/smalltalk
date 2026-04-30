@@ -1,134 +1,108 @@
 <!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>午餐互動小遊戲</title>
 
 <style>
-body {
-  margin: 0;
-  font-family: "Noto Sans TC", sans-serif;
-  background: linear-gradient(135deg,#fff1f5,#fff8dc,#e8f7ff);
+body{
+  margin:0;
+  font-family:"Noto Sans TC",sans-serif;
+  background:linear-gradient(135deg,#fff1f5,#fff8dc,#e8f7ff);
 }
 
-.container {
-  max-width: 720px;
-  margin: auto;
-  padding: 30px 16px;
+.container{
+  max-width:720px;
+  margin:auto;
+  padding:30px 16px;
 }
 
-h1 {
-  text-align: center;
-  color: #ff7c9c;
+h1{
+  text-align:center;
+  color:#ff7c9c;
 }
 
-.card {
-  background: white;
-  border-radius: 24px;
-  padding: 22px;
-  margin-top: 20px;
-  box-shadow: 0 10px 24px rgba(0,0,0,0.08);
+.card{
+  background:white;
+  border-radius:24px;
+  padding:22px;
+  margin-top:20px;
+  box-shadow:0 10px 24px rgba(0,0,0,0.08);
 }
 
-h2 {
-  color: #ff8aa8;
+button{
+  width:100%;
+  padding:14px;
+  border-radius:999px;
+  border:none;
+  font-size:16px;
+  font-weight:bold;
+  margin-top:14px;
+  background:linear-gradient(135deg,#ff8aa8,#ffb86c);
+  color:white;
 }
 
-button {
-  width: 100%;
-  padding: 14px;
-  border-radius: 999px;
-  border: none;
-  font-size: 16px;
-  font-weight: bold;
-  margin-top: 14px;
-  background: linear-gradient(135deg,#ff8aa8,#ffb86c);
-  color: white;
+/* 卡片 */
+.card-stage{
+  position:relative;
+  height:170px;
+  margin-top:18px;
+  overflow:hidden;
 }
 
-.card-stage {
-  position: relative;
-  height: 170px;
-  margin-top: 18px;
-  overflow: hidden;
+.draw-card{
+  position:absolute;
+  inset:0;
+  background:#fff7fa;
+  border:2px solid #ffd1dc;
+  border-radius:22px;
+  padding:22px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+  transition:transform .45s ease,opacity .45s ease;
 }
 
-.draw-card {
-  position: absolute;
-  inset: 0;
-  background: #fff7fa;
-  border: 2px solid #ffd1dc;
-  border-radius: 22px;
-  padding: 22px;
-  box-sizing: border-box;
-  line-height: 1.8;
-  font-size: 18px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  transition: transform 0.45s ease, opacity 0.45s ease;
+.card-out{
+  transform:translateX(-120%) rotate(-6deg);
+  opacity:0;
 }
 
-.slide-out {
-  transform: translateX(-120%) rotate(-8deg);
-  opacity: 0;
+/* 轉盤 */
+.wheel-wrap{
+  position:relative;
+  width:300px;
+  height:300px;
+  margin:24px auto;
 }
 
-.slide-in {
-  animation: slideIn 0.45s ease;
+.pointer{
+  position:absolute;
+  top:-10px;
+  left:50%;
+  transform:translateX(-50%);
+  border-left:18px solid transparent;
+  border-right:18px solid transparent;
+  border-top:34px solid #ff7c9c;
+  z-index:5;
 }
 
-@keyframes slideIn {
-  from {
-    transform: translateX(120%) rotate(8deg);
-    opacity: 0;
-  }
-  to {
-    transform: translateX(0) rotate(0);
-    opacity: 1;
-  }
+.wheel{
+  width:300px;
+  height:300px;
+  border-radius:50%;
+  border:8px solid #fff;
+  transition:transform 4s cubic-bezier(.17,.67,.18,1.02);
 }
 
-.wheel-wrap {
-  position: relative;
-  width: 300px;
-  height: 300px;
-  margin: 24px auto 10px;
-}
-
-.pointer {
-  position: absolute;
-  top: -10px;
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 5;
-  width: 0;
-  height: 0;
-  border-left: 18px solid transparent;
-  border-right: 18px solid transparent;
-  border-top: 34px solid #ff7c9c;
-}
-
-.wheel {
-  width: 300px;
-  height: 300px;
-  border-radius: 50%;
-  border: 8px solid #fff;
-  box-shadow: 0 10px 25px rgba(0,0,0,0.12);
-  transition: transform 4s cubic-bezier(.17,.67,.18,1.02);
-}
-
-.result {
-  margin-top: 14px;
-  padding: 16px;
-  background: #fff7fa;
-  border-radius: 16px;
-  min-height: 50px;
-  line-height: 1.8;
-  font-size: 17px;
-  text-align: center;
+.result{
+  text-align:center;
+  padding:16px;
+  background:#fff7fa;
+  border-radius:16px;
+  margin-top:10px;
 }
 </style>
 </head>
@@ -139,139 +113,140 @@ button {
 <h1>🍱 午餐互動小遊戲</h1>
 
 <div class="card">
-  <h2>🎴 今日聊天抽卡</h2>
-  <button onclick="draw()">滑一張新卡</button>
-  <div class="card-stage">
-    <div class="draw-card" id="q">今天要抽一張很沒負擔的怪卡。</div>
-  </div>
+<h2>🎴 今日聊天抽卡</h2>
+<button onclick="draw()">滑一張</button>
+
+<div class="card-stage">
+<div class="draw-card" id="card1">今天抽一張怪卡</div>
+<div class="draw-card" id="card2" style="transform:translateX(120%);opacity:0;"></div>
+</div>
 </div>
 
 <div class="card">
-  <h2>🍜 午餐旋轉盤</h2>
-  <div class="wheel-wrap">
-    <div class="pointer"></div>
-    <canvas id="wheel" class="wheel" width="300" height="300"></canvas>
-  </div>
-  <button onclick="spinWheel()">開始旋轉</button>
-  <div class="result" id="f">午餐命運還沒啟動。</div>
+<h2>🍜 午餐旋轉盤</h2>
+
+<div class="wheel-wrap">
+<div class="pointer"></div>
+<canvas id="wheel" class="wheel" width="300" height="300"></canvas>
+</div>
+
+<button onclick="spinWheel()">開始旋轉</button>
+<div class="result" id="f">午餐命運還沒啟動</div>
+
 </div>
 
 </div>
 
 <script>
-const questions = [
-"如果今天的午餐會掉落一個道具，你希望是什麼？",
-"如果這家店有隱藏菜單，你覺得會是什麼？",
-"今天路上看到的第一個奇怪東西是什麼？",
-"如果午餐店老闆是遊戲NPC，他會說哪句台詞？",
-"如果今天只能用一個音效形容，你會選什麼？",
-"如果你的湯突然會講話，它第一句會說什麼？",
-"今天比較像省電模式，還是亂跑模式？",
-"如果這份午餐要取一個中二名字，會叫什麼？",
-"如果今天公司附近出現任意門，你會先去哪？",
-"如果今天只能用三個字抱怨，你會說什麼？",
-"如果今天有一個無用超能力，你希望是什麼？",
-"如果午餐時間可以暫停十分鐘，你會拿來做什麼？",
-"如果今天可以合法消失十五分鐘，你會去哪裡？",
-"如果今天走路會自帶背景音樂，你覺得是哪種？",
-"如果今天要用一句廢話總結，會是什麼？"
+
+/* 聊天題目 */
+const questions=[
+"如果今天的湯會講話，它會吐槽什麼？",
+"如果你現在是一個NPC，你會說哪句話？",
+"今天比較像在過關還是在卡關？",
+"如果今天有隱藏任務，你覺得是什麼？",
+"如果午餐可以附贈一個技能，你要什麼？",
+"今天比較像背景角色還是主角？",
+"如果今天可以快轉到下班，你會按嗎？",
+"如果你是一個道具，你會是哪種？",
+"如果今天有一個小怪，你覺得長怎樣？",
+"今天的你比較像WiFi還是行動數據？",
+"如果午餐要取名字，會叫什麼？",
+"今天適合認真還是隨便？",
+"如果今天是一種聲音，會是什麼？",
+"今天的狀態比較像幾%電量？",
+"如果今天可以隱形10分鐘，你要幹嘛？",
+"如果這條路會講話，它會說什麼？",
+"今天比較像冰的還是熱的？",
+"如果今天可以刪掉一件事，你會刪什麼？",
+"如果今天是一個按鈕，你會是什麼功能？",
+"今天最不想碰的是什麼？"
 ];
+
+let showingCard=1;
 
 function draw(){
-  const card = document.getElementById("q");
-  const r = questions[Math.floor(Math.random()*questions.length)];
-  card.classList.add("slide-out");
+  const q=questions[Math.floor(Math.random()*questions.length)];
+  const c1=document.getElementById("card1");
+  const c2=document.getElementById("card2");
 
-  setTimeout(() => {
-    card.innerHTML = r;
-    card.classList.remove("slide-out");
-    card.classList.add("slide-in");
-  }, 250);
+  let current,next;
 
-  setTimeout(() => {
-    card.classList.remove("slide-in");
-  }, 700);
+  if(showingCard===1){
+    current=c1; next=c2; showingCard=2;
+  }else{
+    current=c2; next=c1; showingCard=1;
+  }
+
+  next.innerHTML=q;
+  next.style.transform="translateX(120%)";
+  next.style.opacity="0";
+
+  requestAnimationFrame(()=>{
+    current.classList.add("card-out");
+    next.style.transform="translateX(0)";
+    next.style.opacity="1";
+  });
+
+  setTimeout(()=>{
+    current.classList.remove("card-out");
+    current.style.transform="translateX(120%)";
+    current.style.opacity="0";
+  },450);
 }
 
-const foods = [
+/* 轉盤 */
+const foods=[
 "米粉湯","油飯","肉粽","涼麵","肉圓",
 "便當","雞腿飯","排骨飯","滷肉飯","雞肉飯",
-"燒臘便當","咖哩飯","日式丼飯","牛丼","親子丼",
-"牛肉麵","餛飩麵","乾麵","湯麵","麻醬麵",
-"鍋燒意麵","炒飯","炒麵","水餃","鍋貼",
-"湯包","小籠包","餛飩湯","米粉炒","粄條",
-"越南河粉","泰式打拋豬飯","韓式拌飯","小火鍋","鐵板燒",
-"自助餐","健康餐盒","三明治","便利商店便當","壽司"
+"燒臘","咖哩飯","丼飯","牛肉麵","乾麵",
+"炒飯","水餃","鍋貼","湯包","自助餐"
 ];
 
-const colors = [
-"#ffd6e0","#ffe8a3","#c9f2ff","#d8f7c5",
-"#ffc9de","#ffe1b8","#cde7ff","#e4d4ff"
-];
-
-const canvas = document.getElementById("wheel");
-const ctx = canvas.getContext("2d");
-const size = canvas.width;
-const center = size / 2;
-const slice = 2 * Math.PI / foods.length;
-let currentRotation = 0;
-let spinning = false;
+const canvas=document.getElementById("wheel");
+const ctx=canvas.getContext("2d");
+const size=300;
+const center=size/2;
+const slice=2*Math.PI/foods.length;
 
 function drawWheel(){
-  for(let i = 0; i < foods.length; i++){
-    const start = i * slice;
-    const end = start + slice;
-
+  for(let i=0;i<foods.length;i++){
     ctx.beginPath();
-    ctx.moveTo(center, center);
-    ctx.arc(center, center, center, start, end);
-    ctx.fillStyle = colors[i % colors.length];
+    ctx.moveTo(center,center);
+    ctx.arc(center,center,center,i*slice,(i+1)*slice);
+    ctx.fillStyle=i%2?"#ffe1e8":"#ffd4a3";
     ctx.fill();
 
     ctx.save();
-    ctx.translate(center, center);
-    ctx.rotate(start + slice / 2);
-    ctx.textAlign = "right";
-    ctx.fillStyle = "#5b4a4a";
-    ctx.font = "bold 11px Noto Sans TC";
-    ctx.fillText(foods[i], center - 12, 4);
+    ctx.translate(center,center);
+    ctx.rotate(i*slice+slice/2);
+    ctx.textAlign="right";
+    ctx.font="12px sans-serif";
+    ctx.fillText(foods[i],center-10,4);
     ctx.restore();
   }
-
-  ctx.beginPath();
-  ctx.arc(center, center, 38, 0, 2 * Math.PI);
-  ctx.fillStyle = "#ffffff";
-  ctx.fill();
-
-  ctx.fillStyle = "#ff7c9c";
-  ctx.font = "bold 18px Noto Sans TC";
-  ctx.textAlign = "center";
-  ctx.fillText("午餐", center, center + 6);
 }
-
 drawWheel();
 
+let currentRotation=0;
+
 function spinWheel(){
-  if(spinning) return;
-  spinning = true;
+  const index=Math.floor(Math.random()*foods.length);
 
-  const resultIndex = Math.floor(Math.random() * foods.length);
-  const degreesPerSlice = 360 / foods.length;
+  const sliceDeg=360/foods.length;
 
-  const targetAngle = 270 - (resultIndex * degreesPerSlice + degreesPerSlice / 2);
-  const extraSpins = 360 * 6;
-  currentRotation += extraSpins + targetAngle;
+  // 🔥 修正：讓指針精準對中
+  const target=360*5 + (360 - index*sliceDeg - sliceDeg/2);
 
-  canvas.style.transform = `rotate(${currentRotation}deg)`;
+  currentRotation+=target;
 
-  document.getElementById("f").innerHTML = "轉盤努力運算中……";
+  canvas.style.transform=`rotate(${currentRotation}deg)`;
 
-  setTimeout(() => {
-    document.getElementById("f").innerHTML = "👉 今日推薦：" + foods[resultIndex];
-    spinning = false;
-  }, 4100);
+  setTimeout(()=>{
+    document.getElementById("f").innerHTML="👉 今日推薦："+foods[index];
+  },4000);
 }
-</script>
 
+</script>
 </body>
 </html>
