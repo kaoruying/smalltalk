@@ -40,61 +40,61 @@ button{
   color:white;
 }
 
-/* 卡片 */
-.card-stage{
-  position:relative;
-  height:170px;
-  overflow:hidden;
+/* 翻卡 */
+.flip-card{
+  perspective:1000px;
+  height:160px;
+  margin-top:16px;
 }
 
-.draw-card{
+.flip-inner{
+  position:relative;
+  width:100%;
+  height:100%;
+  transition:transform .6s;
+  transform-style:preserve-3d;
+}
+
+.flip-card.flipped .flip-inner{
+  transform:rotateY(180deg);
+}
+
+.flip-front,.flip-back{
   position:absolute;
-  inset:0;
+  width:100%;
+  height:100%;
+  backface-visibility:hidden;
   background:#fff7fa;
   border:2px solid #ffd1dc;
-  border-radius:22px;
-  padding:22px;
+  border-radius:18px;
   display:flex;
   align-items:center;
   justify-content:center;
   text-align:center;
-  transition:transform .45s ease,opacity .45s ease;
-}
-
-/* 轉盤 */
-.wheel-wrap{
-  position:relative;
-  width:300px;
-  height:300px;
-  margin:24px auto;
-}
-
-.pointer{
-  position:absolute;
-  top:-10px;
-  left:50%;
-  transform:translateX(-50%);
-  border-left:18px solid transparent;
-  border-right:18px solid transparent;
-  border-top:34px solid #ff7c9c;
-  z-index:5;
-}
-
-.wheel{
-  width:300px;
-  height:300px;
-  border-radius:50%;
-  border:8px solid #fff;
-  transition:transform 4s cubic-bezier(.17,.67,.18,1.02);
-}
-
-.result{
-  text-align:center;
   padding:16px;
-  background:#fff7fa;
-  border-radius:16px;
-  margin-top:10px;
 }
+
+.flip-back{ transform:rotateY(180deg); }
+
+/* 午餐 */
+.food-grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:10px;
+  margin-top:16px;
+}
+
+.food-card{
+  background:#fff7fa;
+  border-radius:12px;
+  padding:14px;
+  text-align:center;
+  border:2px solid #ffd1dc;
+  cursor:pointer;
+  transition:.2s;
+}
+
+.food-card:hover{ transform:scale(1.05); }
 </style>
 </head>
 
@@ -103,150 +103,132 @@ button{
 
 <h1>🍱 午餐互動小遊戲</h1>
 
+<!-- 🎴 話題 -->
 <div class="card">
-<h2>🎴 今日聊天抽卡</h2>
-<button onclick="draw()">滑一張</button>
+<h2>🎴 今日聊天翻卡</h2>
+<button onclick="newCard()">抽一張</button>
 
-<div class="card-stage">
-<div class="draw-card" id="card">今天抽一張</div>
-</div>
+<div class="flip-card" id="flip">
+  <div class="flip-inner">
+    <div class="flip-front" id="front">點抽卡</div>
+    <div class="flip-back" id="back">翻過來看</div>
+  </div>
 </div>
 
+<button onclick="flipCard()">翻卡</button>
+</div>
+
+<!-- 🍜 午餐 -->
 <div class="card">
-<h2>🍜 午餐旋轉盤</h2>
-
-<div class="wheel-wrap">
-<div class="pointer"></div>
-<canvas id="wheel" class="wheel"></canvas>
-</div>
-
-<button onclick="spinWheel()">開始旋轉</button>
-<div class="result" id="f">午餐命運還沒啟動</div>
-
+<h2>🍜 午餐翻牌</h2>
+<button onclick="generateFoods()">重新發牌</button>
+<div class="food-grid" id="foods"></div>
 </div>
 
 </div>
 
 <script>
 
-/* 聊天題目（具體版） */
-const questions=[
-"如果今天可以得到小叮噹的一個道具，你會選哪個？為什麼",
-"如果你電腦可以多一個功能，你最希望是什麼",
-"如果今天可以跳過一個流程，你最想跳過哪一段",
-"如果滑鼠多一個按鍵，你希望它做什麼",
-"如果今天有自動完成功能，你會用在哪件事",
-"如果可以外包一件麻煩事給AI，你會選什麼",
-"如果手機多一個模式，你希望是什麼",
-"如果時間可以暫停5分鐘，你會做什麼",
-"如果今天可以不用排隊，你會用在哪",
-"如果一件事可以變超快，你會選哪件",
-"如果今天有免責卡，你會用在哪件事",
-"如果可以刪掉今天一段時間，你會刪哪段",
-"如果今天多一個快捷鍵，你希望是什麼",
-"如果可以不用再做一件事，你會選什麼",
-"如果今天可以複製一個自己，你會讓他做什麼",
-"如果今天可以直接完成一件事，你會選哪件",
-"如果今天可以不用解釋，你會用在哪情境",
-"如果今天有一個偷懶技能，你會用在哪",
-"如果今天可以跳過思考，你會選哪件事",
-"如果今天可以讓一件事變簡單，你會選什麼"
+/* 🎴 話題（50+） */
+const topics=[
+["如果今天的雲可以吃，你覺得是什麼口味","吃了會發生什麼奇怪效果"],
+["如果今天走路會掉東西","你最希望掉什麼"],
+["如果你的影子突然有自己的想法","它會做什麼"],
+["如果今天的風有個性","它會像誰"],
+["如果突然出現一扇門","你會開還是裝沒看到"],
+["如果今天的天空是一則訊息","內容是什麼"],
+["如果今天咖啡可以評價人","它會怎麼說"],
+["如果今天有隱藏NPC","他在你旁邊做什麼"],
+["如果今天時間會卡住","會卡在哪一刻"],
+["如果今天可以換視角看世界","你會選什麼角度"],
+
+["如果今天所有聲音都有顏色","現在是什麼顏色"],
+["如果今天開始下奇怪的雨","你希望是什麼雨"],
+["如果今天路會記得你","它會怎麼形容你"],
+["如果今天手機有情緒","它現在什麼心情"],
+["如果今天可以放大一樣東西十倍","你會選什麼"],
+["如果今天世界多一條奇怪規則","會是什麼"],
+["如果今天可以偷聽一樣東西","你會偷聽什麼"],
+["如果今天有一個小bug","你希望出現在哪裡"],
+["如果今天所有東西都慢一秒","你會先發現哪件事"],
+["如果今天你變成一個物件","你會是哪個"],
+
+["如果今天有一個隱藏關卡","你覺得入口在哪"],
+["如果今天可以暫停世界","你會先做什麼"],
+["如果今天空氣有味道","現在是什麼味"],
+["如果今天世界突然安靜","你會覺得安心還是怪"],
+["如果今天所有人都慢半拍","你會怎樣"],
+["如果今天有一個神秘觀察者","他在記錄什麼"],
+["如果今天可以刪掉一個瞬間","你會刪哪個"],
+["如果今天突然變成遊戲","你的任務是什麼"],
+["如果今天有一個奇怪通知","你覺得是什麼"],
+["如果今天可以帶走一樣東西","你會帶什麼"],
+
+["如果今天時間會倒轉","你會回到哪一刻"],
+["如果今天影子消失","你第一個反應是什麼"],
+["如果今天天空突然很低","你會覺得怎樣"],
+["如果今天所有顏色變淡","你會先注意哪個"],
+["如果今天有一個看不見的朋友","他會陪你做什麼"],
+["如果今天路會改變方向","你會跟著走嗎"],
+["如果今天有一個奇怪聲音","你會去找來源嗎"],
+["如果今天所有門都變重","你會先卡在哪裡"],
+["如果今天時間變快","你會來不及做什麼"],
+["如果今天有一個隱藏訊號","你覺得在哪裡"],
+
+["如果今天世界變得很安靜","你會覺得舒服還是不習慣"],
+["如果今天所有東西都有名字","你會先幫哪個取名"],
+["如果今天可以選一個小幸運","你會選什麼"],
+["如果今天有一個奇怪任務","你覺得是什麼"],
+["如果今天所有路都一樣","你會怎麼選"],
+["如果今天可以看到未來一分鐘","你會看嗎"],
+["如果今天所有聲音變大","你會先受不了哪個"],
+["如果今天有一個奇怪光","你會跟著走嗎"],
+["如果今天可以藏起來10分鐘","你會躲哪"],
+["如果今天有一個奇怪規則","你會遵守嗎"]
 ];
 
-function draw(){
-  const card=document.getElementById("card");
-  const q=questions[Math.floor(Math.random()*questions.length)];
+let current;
 
-  card.style.transform="translateX(100%)";
-  card.style.opacity="0";
-
-  setTimeout(()=>{
-    card.innerHTML=q;
-    card.style.transition="none";
-    card.style.transform="translateX(-100%)";
-
-    requestAnimationFrame(()=>{
-      card.style.transition=".45s ease";
-      card.style.transform="translateX(0)";
-      card.style.opacity="1";
-    });
-  },200);
+function newCard(){
+  current=topics[Math.floor(Math.random()*topics.length)];
+  document.getElementById("front").innerHTML=current[0];
+  document.getElementById("back").innerHTML=current[1];
+  document.getElementById("flip").classList.remove("flipped");
 }
 
-/* 轉盤資料 */
-const foods=[
+function flipCard(){
+  document.getElementById("flip").classList.toggle("flipped");
+}
+
+/* 🍜 午餐（50+） */
+const allFoods=[
 "米粉湯","油飯","肉粽","涼麵","肉圓",
-"便當","雞腿飯","排骨飯","滷肉飯","雞肉飯",
+"雞腿飯","排骨飯","滷肉飯","雞肉飯",
 "燒臘","咖哩飯","丼飯","牛肉麵","乾麵",
-"炒飯","水餃","鍋貼","湯包","自助餐"
+"炒飯","水餃","鍋貼","湯包","自助餐",
+"陽春麵","麻醬麵","粄條","炒麵","鍋燒意麵",
+"越南河粉","泰式打拋豬","韓式拌飯","韓式豆腐鍋","小火鍋",
+"鐵板燒","壽司","飯糰","三明治","潛艇堡",
+"健康餐盒","沙拉","便利商店便當","關東煮","蛋餅午餐版",
+"燒肉飯","魚排飯","控肉飯","叉燒飯","炒青菜便當",
+"雞排飯","鹹水雞（有的中午有）","涼拌麵","豆花配主食","隨便安全牌"
 ];
 
-const canvas=document.getElementById("wheel");
-const ctx=canvas.getContext("2d");
+function generateFoods(){
+  const shuffled=[...allFoods].sort(()=>0.5-Math.random()).slice(0,6);
+  const box=document.getElementById("foods");
+  box.innerHTML="";
 
-canvas.width=600;
-canvas.height=600;
-
-const size=300;
-const center=size/2;
-const slice=2*Math.PI/foods.length;
-
-ctx.scale(2,2);
-
-/* 畫轉盤 */
-function drawWheel(){
-  for(let i=0;i<foods.length;i++){
-    ctx.beginPath();
-    ctx.moveTo(center,center);
-    ctx.arc(center,center,center,i*slice,(i+1)*slice);
-    ctx.fillStyle=i%2?"#ffe1e8":"#ffd4a3";
-    ctx.fill();
-
-    ctx.save();
-    ctx.translate(center,center);
-    ctx.rotate(i*slice+slice/2);
-
-    ctx.fillStyle="#333";
-    ctx.font="bold 12px sans-serif";
-
-    // 🔥 關鍵：文字往內縮
-    ctx.fillText(foods[i],center-40,4);
-
-    ctx.restore();
-  }
-}
-drawWheel();
-
-/* 音效 */
-const spinSound=new Audio("https://assets.mixkit.co/sfx/preview/mixkit-arcade-game-wheel-spin-1934.mp3");
-const doneSound=new Audio("https://assets.mixkit.co/sfx/preview/mixkit-game-success-1945.mp3");
-
-let rotation=0;
-
-/* 旋轉 */
-function spinWheel(){
-
-  const spin=360*5+Math.random()*360;
-  rotation+=spin;
-
-  spinSound.play();
-  canvas.style.transform=`rotate(${rotation}deg)`;
-
-  setTimeout(()=>{
-    const index=getResultIndex();
-    doneSound.play();
-    document.getElementById("f").innerHTML="👉 今日推薦："+foods[index];
-  },4000);
+  shuffled.forEach(f=>{
+    const div=document.createElement("div");
+    div.className="food-card";
+    div.innerHTML=f;
+    div.onclick=()=>alert("👉 就決定吃："+f);
+    box.appendChild(div);
+  });
 }
 
-/* 🔥 核心：角度 → 結果 */
-function getResultIndex(){
-  const deg=rotation%360;
-
-  const adjusted=(360-deg+90)%360;
-
-  return Math.floor(adjusted/(360/foods.length));
-}
+generateFoods();
 
 </script>
 </body>
