@@ -18,10 +18,7 @@ body{
   padding:30px 16px;
 }
 
-h1{
-  text-align:center;
-  color:#ff7c9c;
-}
+h1{text-align:center;color:#ff7c9c;}
 
 .card{
   background:white;
@@ -47,7 +44,6 @@ button{
 .card-stage{
   position:relative;
   height:170px;
-  margin-top:18px;
   overflow:hidden;
 }
 
@@ -63,11 +59,6 @@ button{
   justify-content:center;
   text-align:center;
   transition:transform .45s ease,opacity .45s ease;
-}
-
-.card-out{
-  transform:translateX(-120%) rotate(-6deg);
-  opacity:0;
 }
 
 /* 轉盤 */
@@ -117,8 +108,7 @@ button{
 <button onclick="draw()">滑一張</button>
 
 <div class="card-stage">
-<div class="draw-card" id="card1">今天抽一張怪卡</div>
-<div class="draw-card" id="card2" style="transform:translateX(120%);opacity:0;"></div>
+<div class="draw-card" id="card">今天抽一張</div>
 </div>
 </div>
 
@@ -139,60 +129,49 @@ button{
 
 <script>
 
-/* 聊天題目 */
+/* 聊天題目（具體版） */
 const questions=[
-"如果今天的湯會講話，它會吐槽什麼？",
-"如果你現在是一個NPC，你會說哪句話？",
-"今天比較像在過關還是在卡關？",
-"如果今天有隱藏任務，你覺得是什麼？",
-"如果午餐可以附贈一個技能，你要什麼？",
-"今天比較像背景角色還是主角？",
-"如果今天可以快轉到下班，你會按嗎？",
-"如果你是一個道具，你會是哪種？",
-"如果今天有一個小怪，你覺得長怎樣？",
-"今天的你比較像WiFi還是行動數據？",
-"如果午餐要取名字，會叫什麼？",
-"今天適合認真還是隨便？",
-"如果今天是一種聲音，會是什麼？",
-"今天的狀態比較像幾%電量？",
-"如果今天可以隱形10分鐘，你要幹嘛？",
-"如果這條路會講話，它會說什麼？",
-"今天比較像冰的還是熱的？",
-"如果今天可以刪掉一件事，你會刪什麼？",
-"如果今天是一個按鈕，你會是什麼功能？",
-"今天最不想碰的是什麼？"
+"如果今天可以得到小叮噹的一個道具，你會選哪個？為什麼",
+"如果你電腦可以多一個功能，你最希望是什麼（例如：自動幫你回訊息）",
+"如果今天可以跳過一個工作流程，你最想跳過哪一段",
+"如果你的滑鼠多一個隱藏按鍵，你希望它做什麼",
+"如果你今天有一個『自動完成』功能，你會用在哪件事上",
+"如果你可以把一件麻煩事外包給AI，你會選哪一件",
+"如果今天手機多一個模式，你希望是什麼模式",
+"如果你可以讓時間暫停5分鐘，你會拿來做什麼",
+"如果今天有一個『不用排隊』能力，你會用在哪裡",
+"如果你可以讓一件事情變得超快，你會選哪件",
+
+"如果你有一個『不用解釋』功能，你會用在哪個情境",
+"如果你可以刪掉今天的一段時間，你會刪哪段",
+"如果今天有一個『直接完成』按鈕，你會按哪件事",
+"如果你可以多一個分身，你會讓他幫你做什麼",
+"如果今天有一個『免責卡』，你會用在哪件事上",
+"如果你可以讓一件事情變得不用思考，你會選哪個",
+"如果今天多一個快捷鍵，你最希望是哪個功能",
+"如果你可以讓一件事永遠不用再做，你會選什麼",
+"如果今天可以隨機獲得一個能力，你希望偏哪種類型",
+"如果你可以設定一個『自動回應』，會是什麼內容"
 ];
 
-let showingCard=1;
-
 function draw(){
+  const card=document.getElementById("card");
   const q=questions[Math.floor(Math.random()*questions.length)];
-  const c1=document.getElementById("card1");
-  const c2=document.getElementById("card2");
 
-  let current,next;
-
-  if(showingCard===1){
-    current=c1; next=c2; showingCard=2;
-  }else{
-    current=c2; next=c1; showingCard=1;
-  }
-
-  next.innerHTML=q;
-  next.style.transform="translateX(120%)";
-  next.style.opacity="0";
-
-  requestAnimationFrame(()=>{
-    current.classList.add("card-out");
-    next.style.transform="translateX(0)";
-    next.style.opacity="1";
-  });
+  card.style.transform="translateX(100%)";
+  card.style.opacity="0";
 
   setTimeout(()=>{
-    current.classList.remove("card-out");
-    current.style.transform="translateX(120%)";
-    current.style.opacity="0";
-  },450);
+    card.innerHTML=q;
+    card.style.transition="none";
+    card.style.transform="translateX(-100%)";
+
+    requestAnimationFrame(()=>{
+      card.style.transition=".45s ease";
+      card.style.transform="translateX(0)";
+      card.style.opacity="1";
+    });
+  },200);
 }
 
 /* 轉盤 */
@@ -209,6 +188,11 @@ const size=300;
 const center=size/2;
 const slice=2*Math.PI/foods.length;
 
+/* 🔥 修正文字清晰 */
+canvas.width=600;
+canvas.height=600;
+ctx.scale(2,2);
+
 function drawWheel(){
   for(let i=0;i<foods.length;i++){
     ctx.beginPath();
@@ -220,33 +204,37 @@ function drawWheel(){
     ctx.save();
     ctx.translate(center,center);
     ctx.rotate(i*slice+slice/2);
-    ctx.textAlign="right";
-    ctx.font="12px sans-serif";
+    ctx.fillStyle="#333";
+    ctx.font="bold 12px sans-serif";
     ctx.fillText(foods[i],center-10,4);
     ctx.restore();
   }
 }
 drawWheel();
 
-let currentRotation=0;
+/* 音效 */
+const spinSound=new Audio("https://assets.mixkit.co/sfx/preview/mixkit-arcade-game-wheel-spin-1934.mp3");
+const doneSound=new Audio("https://assets.mixkit.co/sfx/preview/mixkit-game-success-1945.mp3");
+
+let rotation=0;
 
 function spinWheel(){
   const index=Math.floor(Math.random()*foods.length);
+  const deg=360/foods.length;
 
-  const sliceDeg=360/foods.length;
+  const target=360*5+(360-index*deg-deg/2);
+  rotation+=target;
 
-  // 🔥 修正：讓指針精準對中
-  const target=360*5 + (360 - index*sliceDeg - sliceDeg/2);
+  spinSound.play();
 
-  currentRotation+=target;
-
-  canvas.style.transform=`rotate(${currentRotation}deg)`;
+  canvas.style.transform=`rotate(${rotation}deg)`;
 
   setTimeout(()=>{
+    doneSound.play();
     document.getElementById("f").innerHTML="👉 今日推薦："+foods[index];
   },4000);
 }
-
 </script>
+
 </body>
 </html>
